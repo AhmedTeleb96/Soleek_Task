@@ -1,9 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginRegistration.Registration">
+    android:orientation="vertical"
+    tools:context=".LoginRegistration.Registration"
+    android:background="@color/yellow"
+    >
 
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+
+        >
+
+        <EditText
+            android:id="@+id/registerActivity_email_edt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:background="@color/white"
+            android:layout_margin="10dp"
+            />
+
+        <EditText
+            android:id="@+id/registerActivity_password_edt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:background="@color/white"
+            android:layout_margin="10dp"
+            />
+
+        <EditText
+            android:id="@+id/registerActivity_confirmPassword_edt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Confirm Password"
+            android:background="@color/white"
+            android:layout_margin="10dp"
+            />
+
+        <Button
+            android:id="@+id/registerActivity_register_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            android:background="@color/blue"
+            android:layout_marginTop="10dp"
+            />
+
+        <Button
+            android:id="@+id/registerActivity_login_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:background="@color/pink"
+            />
+
+
+    </LinearLayout>
+</RelativeLayout>
