@@ -68,6 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
+        android:orientation="vertical"
         >
 
         <com.facebook.login.widget.LoginButton
@@ -77,6 +78,14 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="30dp"
             android:layout_marginBottom="30dp" />
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/buttonGoogleLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="30dp"
+            />
 
     </LinearLayout>
 
