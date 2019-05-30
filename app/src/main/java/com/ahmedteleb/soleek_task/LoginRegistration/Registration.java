@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.ahmedteleb.soleek_task.CountriesList;
@@ -34,23 +35,84 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Registration extends AppCompatActivity {
 
     private static final String TAG = "FACELOG";
     private static final int RC_SIGN_IN = 1;
     private CallbackManager mCallbackManager;
-    private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
     private GoogleApiClient mGoogleApiClient;
 
+    Button register_btn,loginActivity_btn;
+    EditText email_et , password_et, confirmPassword_et;
+    FirebaseAuth mAuth;
+    FirebaseAuth.AuthStateListener firebaseAuthStateListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
+
+        register_btn = findViewById(R.id.registerActivity_register_btn);
+        email_et = findViewById(R.id.registerActivity_email_edt);
+        password_et = findViewById(R.id.registerActivity_password_edt);
+        confirmPassword_et = findViewById(R.id.registerActivity_confirmPassword_edt);
+        loginActivity_btn = findViewById(R.id.registerActivity_login_btn);
+        loginActivity_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Registration.this, Login.class);
+                startActivity(intent);
+            }
+        });
+
+        firebaseAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if(user != null)
+                {
+                    Intent main_intent =new Intent(getApplication(), CountriesList.class);
+                    main_intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(main_intent);
+                    finish();
+                    return;
+                }
+            }
+        };
+
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+
+        register_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String email = email_et.getText().toString();
+                final String password = password_et.getText().toString();
+                final String confirmPassword = confirmPassword_et.getText().toString();
+
+                mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(Registration.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(!task.isSuccessful())
+                        {
+                            Toast.makeText(getApplication(),"Sign up Error",Toast.LENGTH_SHORT).show();
+                        }else{
+
+                            Toast.makeText(getApplication(),"Sign up Success",Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                });
+            }
+        });
 
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
@@ -96,15 +158,7 @@ public class Registration extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onStart()
-    {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null)
-            Login();
-    }
+
 
     private void Login()
     {
@@ -190,5 +244,19 @@ public class Registration extends AppCompatActivity {
                         // ...
                     }
                 });
+    }
+
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        mAuth.addAuthStateListener(firebaseAuthStateListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mAuth.removeAuthStateListener(firebaseAuthStateListener);
     }
 }
