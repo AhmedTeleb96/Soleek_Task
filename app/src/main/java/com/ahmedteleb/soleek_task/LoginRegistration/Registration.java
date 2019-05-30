@@ -23,6 +23,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -83,7 +84,7 @@ public class Registration extends AppCompatActivity {
                 .requestEmail()
                 .build();
 
-        Button googleLoginButton = findViewById(R.id.buttonGoogleLogin);
+        SignInButton googleLoginButton = findViewById(R.id.buttonGoogleLogin);
 
         mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
         googleLoginButton.setOnClickListener(new View.OnClickListener() {
