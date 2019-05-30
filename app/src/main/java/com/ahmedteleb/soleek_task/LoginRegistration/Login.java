@@ -9,8 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.ahmedteleb.soleek_task.CountriesList;
-import com.ahmedteleb.soleek_task.MainActivity;
+import com.ahmedteleb.soleek_task.CountriesListActivity;
 import com.ahmedteleb.soleek_task.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -52,7 +51,7 @@ public class Login extends AppCompatActivity {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null)
                 {
-                    Intent main_intent =new Intent(getApplication(), CountriesList.class);
+                    Intent main_intent =new Intent(getApplication(), CountriesListActivity.class);
                     main_intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(main_intent);
                     finish();

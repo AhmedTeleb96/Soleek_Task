@@ -2,7 +2,6 @@ package com.ahmedteleb.soleek_task.LoginRegistration;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,8 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.ahmedteleb.soleek_task.CountriesList;
-import com.ahmedteleb.soleek_task.MainActivity;
+import com.ahmedteleb.soleek_task.CountriesListActivity;
 import com.ahmedteleb.soleek_task.R;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -35,11 +33,6 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class Registration extends AppCompatActivity {
 
@@ -79,7 +72,7 @@ public class Registration extends AppCompatActivity {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null)
                 {
-                    Intent main_intent =new Intent(getApplication(), CountriesList.class);
+                    Intent main_intent =new Intent(getApplication(), CountriesListActivity.class);
                     main_intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(main_intent);
                     finish();
@@ -162,7 +155,7 @@ public class Registration extends AppCompatActivity {
 
     private void Login()
     {
-        Intent intent = new Intent(Registration.this, CountriesList.class);
+        Intent intent = new Intent(Registration.this, CountriesListActivity.class);
         startActivity(intent);
         finish();
         return;

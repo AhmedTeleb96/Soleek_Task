@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CountriesList"></activity>
+        <activity android:name=".CountriesListActivity"></activity>
         <activity android:name=".LoginRegistration.Registration" />
         <activity android:name=".LoginRegistration.Login" />
         <activity android:name=".MainActivity">
