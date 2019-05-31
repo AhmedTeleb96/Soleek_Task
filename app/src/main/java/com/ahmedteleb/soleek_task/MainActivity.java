@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -13,6 +14,8 @@ import android.widget.Button;
 
 import com.ahmedteleb.soleek_task.LoginRegistration.Login;
 import com.ahmedteleb.soleek_task.LoginRegistration.Registration;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -20,6 +23,9 @@ import java.security.NoSuchAlgorithmException;
 public class MainActivity extends AppCompatActivity {
 
     private Button Login_btn , Regiatration_btn;
+    FirebaseAuth mAuth;
+    FirebaseAuth.AuthStateListener firebaseAuthStateListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,5 +54,35 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         });
+
+        mAuth = FirebaseAuth.getInstance();
+
+        firebaseAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if(user != null)
+                {
+                    Intent main_intent =new Intent(getApplication(), CountriesListActivity.class);
+                    main_intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(main_intent);
+                    finish();
+                    return;
+                }
+            }
+        };
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(firebaseAuthStateListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mAuth.removeAuthStateListener(firebaseAuthStateListener);
     }
 }
