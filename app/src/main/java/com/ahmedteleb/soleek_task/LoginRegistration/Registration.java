@@ -1,10 +1,17 @@
 package com.ahmedteleb.soleek_task.LoginRegistration;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,11 +24,15 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -34,7 +45,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class Registration extends AppCompatActivity {
+
 
     private static final String TAG = "FACELOG";
     private static final int RC_SIGN_IN = 1;
@@ -91,19 +106,29 @@ public class Registration extends AppCompatActivity {
                 final String password = password_et.getText().toString();
                 final String confirmPassword = confirmPassword_et.getText().toString();
 
-                mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(Registration.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(!task.isSuccessful())
-                        {
-                            Toast.makeText(getApplication(),"Sign up Error",Toast.LENGTH_SHORT).show();
-                        }else{
+                if(password.equals(confirmPassword)) {
+                    if (isValidEmailPassword(email,password)) {
+                        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(Registration.this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (!task.isSuccessful()) {
+                                    Toast.makeText(getApplication(), "Sign up Error", Toast.LENGTH_SHORT).show();
+                                } else {
 
-                            Toast.makeText(getApplication(),"Sign up Success",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplication(), "Sign up Success", Toast.LENGTH_SHORT).show();
 
-                        }
+                                }
+                            }
+                        });
+                    }else {
+                        Toast.makeText(getApplication(), "Invalid Email or Password", Toast.LENGTH_SHORT).show();
                     }
-                });
+
+                }else
+                {
+                    Toast.makeText(getApplication(), "Password Confirmation Error", Toast.LENGTH_SHORT).show();
+
+                }
             }
         });
 
@@ -141,21 +166,36 @@ public class Registration extends AppCompatActivity {
 
         SignInButton googleLoginButton = findViewById(R.id.buttonGoogleLogin);
 
+        // Build a GoogleApiClient with access to the Google Sign-In API and the options specified by gso.
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                      Log.d(TAG, "Login fail");
+                    }
+                })
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+
         mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
         googleLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                signIn();
+               // signIn();
+
+                Intent intent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+                startActivityForResult(intent,RC_SIGN_IN);
             }
         });
 
     }
 
 
-
     private void Login()
     {
         Intent intent = new Intent(Registration.this, CountriesListActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
         return;
@@ -213,6 +253,8 @@ public class Registration extends AppCompatActivity {
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
+
+
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
@@ -251,5 +293,10 @@ public class Registration extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         mAuth.removeAuthStateListener(firebaseAuthStateListener);
+    }
+
+    public static boolean isValidEmailPassword(CharSequence email,CharSequence password) {
+        return (!TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches()
+                && !TextUtils.isEmpty(password) && password.length() >= 6 );
     }
 }
